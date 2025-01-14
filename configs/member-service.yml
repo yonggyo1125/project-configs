@@ -46,3 +46,7 @@ cors:
   allowed:
     - https://pintech.koreait.xyz
     - http://localhost:3000
+
+# 프론트 앤드 도메인
+front:
+  domain: https://pintech.koreait.xyz,http://localhost:3000
