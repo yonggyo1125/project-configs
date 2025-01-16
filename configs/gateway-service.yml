@@ -20,6 +20,14 @@ spring:
           enabled: true
           lowerCaseServiceId: true
 
+        routes:
+          - id: member-service
+            uri: lb://member-service
+            predicates:
+              - Path=/api/v1/member/**
+            filters:
+              - RewritePath=/api/v1/member/?(?<path>.*),/$\{path}
+
 # 유레카 설정
 eureka:
   instance:
