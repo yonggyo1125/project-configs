@@ -16,17 +16,17 @@ spring:
         allowCredentials: true # 요청시 인증정보 전송 허가
         allowedHeaders: '*'
         allowedMethods: '*'
-        discovery.locator:
-          enabled: true
-          lowerCaseServiceId: true
+      discovery.locator:
+        enabled: true
+        lowerCaseServiceId: true
 
-        routes:
-          - id: member-service
-            uri: lb://member-service
-            predicates:
-              - Path=/api/v1/member/**
-            filters:
-              - RewritePath=/api/v1/member/?(?<path>.*),/$\{path}
+      routes:
+        - id: member-service
+          uri: lb://member-service
+          predicates:
+            - Path=/api/v1/member/**
+          filters:
+            - RewritePath=/api/v1/member/?(?<path>.*),/$\{path}
 
 # 유레카 설정
 eureka:
