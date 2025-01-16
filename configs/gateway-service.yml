@@ -1,0 +1,42 @@
+server:
+  port: 3997
+
+spring:
+  cloud:
+    gateway:
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins:
+              - 'http://localhost:3000'
+              - 'https://pintech.koreait.xyz'
+
+        allowCredentials: true # 요청시 인증정보 전송 허가
+        allowedHeaders: '*'
+        allowedMethods: '*'
+        discovery.locator:
+          enabled: true
+          lowerCaseServiceId: true
+
+# 유레카 설정
+eureka:
+  instance:
+    hostname: ${hostname}
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: ${eureka.server}/eureka/
+
+# 액츄에이터 설정
+management:
+  endpoint:
+    gateway:
+      enabled: true
+
+  endpoints:
+    web:
+      exposure:
+        include: gateway
