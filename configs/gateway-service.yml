@@ -27,7 +27,12 @@ spring:
             - Path=/api/v1/member/**
           filters:
             - RewritePath=/api/v1/member/?(?<path>.*),/$\{path}
-
+        - id: pokemon-service
+          uri: lb://pokemon-service
+          predicates:
+            - Path=/api/v1/pokemon/**
+          filters:
+            - RewritePath=/api/v1/pokemon/?(?<path>.*),/$\{path}
 # 유레카 설정
 eureka:
   instance:
