@@ -40,3 +40,8 @@ springdoc:
     doc-expansion: none
   paths-to-match:
     - /api/v1/**
+
+# 파이썬 설정
+python:
+  path: ${python.run.path}
+  script: ${python.script.path}
