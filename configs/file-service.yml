@@ -39,18 +39,17 @@ file:
 
 # Swagger API 설정
 springdoc:
-  swagger-ui:
-    path: /swagger-ui.html
-    groups-order: DESC
-    operationsSorter: method
-    disable-swagger-default-url: true
-    display-request-duration: true
-    defaultModelsExpandDepth: -1
+  version: '1.0.0'
   api-docs:
-    path: /apidocs.html
-    show-actuator: true
+    path: /api-docs
   default-consumes-media-type: application/json
   default-produces-media-type: application/json
+  swagger-ui:
+    operations-sorter: alpha
+    tags-sorter: alpha
+    path: /apidocs.html
+    disable-swagger-default-url: true
+    doc-expansion: none
   paths-to-match:
     - /**
 
