@@ -34,6 +34,7 @@ spring:
             - Path=/api/v1/file/**
           filters:
             - RewritePath=/api/v1/file/?(?<path>.*),/$\{path}
+
 # 유레카 설정
 eureka:
   instance:
