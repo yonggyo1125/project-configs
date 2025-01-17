@@ -53,6 +53,10 @@ springdoc:
   paths-to-match:
     - /**
 
+# cors 설정
+cors:
+  allowed: https://pintech.koreait.xyz,http://localhost:3000
+
 # 유레카 설정
 eureka:
   instance:
