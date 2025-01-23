@@ -41,7 +41,13 @@ spring:
             - Path=/api/v1/board/**
           filters:
             - RewritePath=/api/v1/board/?(?<path>.*),/$\{path}
-
+            -
+        - id: payment-service
+          uri: lb://payment-service
+          predicates:
+            - Path=/api/v1/payment/**
+          filters:
+            - RewritePath=/api/v1/payment/?(?<path>.*),/$\{path}
 # 유레카 설정
 eureka:
   instance:
