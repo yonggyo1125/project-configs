@@ -1,3 +1,5 @@
+sever:
+  port: 3005
 spring:
   cloud:
     gateway:
