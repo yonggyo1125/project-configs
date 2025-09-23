@@ -3,11 +3,12 @@ sever:
 spring:
   cloud:
     gateway:
-      discovery:
-        locator:
-          enabled: true # 서비스 디스커버리를 통해 동적으로 라우트를 생성하도록 설정
       server:
         webflux:
+          discovery:
+            locator:
+              enabled: true # 서비스 디스커버리를 통해 동적으로 라우트를 생성하도록 설정
+
           routes:
             - id: auth-service # 라우트 식별자
               uri: lb://auth-service # auth-service라는 이름으로 로드 밸런싱된 서비스로 라우팅
