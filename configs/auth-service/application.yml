@@ -1,0 +1,4 @@
+# JSON WebToken 설정
+jwt:
+  secret: ${jwtSecret}
+  token-valid-time: 3600 # 발급한 토큰의 유효기간
