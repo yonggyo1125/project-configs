@@ -1,0 +1,22 @@
+spring:
+  cloud:
+    loadbalancer:
+      ribbon:
+        enabled: false # Netflix Ribbon 대신 Spring Cloud LoadBalancer 사용
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:3101/eureka/
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    prometheus:
+      enabled: true
