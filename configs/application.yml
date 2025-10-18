@@ -31,7 +31,8 @@ resilience4j:
         enableExponentialBackoff: true  # 지수 백오프 활성화 (재시도마다 대기 시간 증가)
         exponentialBackoffMultiplier: 2.0  # 각 재시도마다 대기 시간이 2배로 증가
         retryExceptions:  # 재시도할 예외 목록
-          - java.io.IOException
+          #- java.io.IOException
+          - java.lang.Exception
 
   bulkhead:  # 벌크헤드 설정 (동시 호출 제한)
     configs:
