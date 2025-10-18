@@ -1,0 +1,43 @@
+spring:
+  # 데이터베이스 설정
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: ${db.url}
+    username: ${db.username}
+    password: ${db.password}
+  # JPA 설정
+  jpa:
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+        use_sql_comments: true
+    hibernate:
+      ddl-auto: ${ddl.auto}
+
+# 로그 설정
+logging:
+  level:
+    org.hibernate.type: trace
+    org.hibernate.orm.jdbc.bind: trace
+
+# JSON WebToken 설정
+jwt:
+  secret: ${jwtSecret}
+  token-valid-time: 3600 # 발급한 토큰의 유효기간
+
+# OPEN DOC API 설정
+springdoc:
+  version: '1.0.0'
+  api-docs:
+    path: /api-docs
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
+  swagger-ui:
+    operations-sorter: alpha
+    tags-sorter: alpha
+    path: /api-docs.html
+    disable-swagger-default-url: true
+    doc-expansion: none
+  paths-to-match:
+    - /v1/**
