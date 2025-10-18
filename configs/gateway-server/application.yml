@@ -19,13 +19,3 @@ spring:
             - Path=/v1/order/**
           filters:
             - "RewritePath=/v1/order/(?<path>.*), /${path}" # /v1/product/... 형태로 유입되면 /경로 형태로 변환 처리하여 경로 인식
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info,metrics,prometheus,gateway
-
-  endpoint:
-    gateway:
-      enabled: true
