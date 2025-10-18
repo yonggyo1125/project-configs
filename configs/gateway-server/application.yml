@@ -11,14 +11,14 @@ spring:
           predicates:
             - Path=/v1/product/**
           filters:
-            - RewritePath=/v1/product/(?<path>.*), /${path} # /v1/product/... 형태로 유입되면 /경로 형태로 변환 처리하여 경로 인식
+            - "RewritePath=/v1/product/(?<path>.*), /${path}" # /v1/product/... 형태로 유입되면 /경로 형태로 변환 처리하여 경로 인식
 
         - id: order-service
           uri: lb://order-service
           predicates:
             - Path=/v1/order/**
           filters:
-            - RewritePath=/v1/order/(?<path>.*), /${path} # /v1/product/... 형태로 유입되면 /경로 형태로 변환 처리하여 경로 인식
+            - "RewritePath=/v1/order/(?<path>.*), /${path}" # /v1/product/... 형태로 유입되면 /경로 형태로 변환 처리하여 경로 인식
 
 management:
   endpoints:
