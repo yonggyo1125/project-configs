@@ -1,35 +1,31 @@
 spring:
   cloud:
     gateway:
-      # 서비스 디스커버리를 통한 동적 라우트 생성
       discovery:
         locator:
-          enabled: true
-          lower-case-service-id: true   # 서비스아이디 소문자화
-          predicate: Path=/services/**  # optional: 디스커버리 기본 predicate
-      # 정적 라우트 예시 (디스커버리와 병행 사용 가능)
+          enabled: true # 서비스 디스커버리를 통해 동적으로 라우트를 생성하도록 설정
+
       routes:
-        - id: product-service
-          uri: lb://product-service
+        - id: product-service # 라우트 식별자
+          uri: lb://product-service # product-service 라는 이름으로 로드 밸런싱된 서비스로 라우팅
           predicates:
             - Path=/v1/product/**
           filters:
-            - "RewritePath=/v1/product/(?<path>.*), /${path}"
-            - name: AddRequestHeader
-              args:
-                X-From-Gateway: my-gateway
+            - "RewritePath=/v1/product/(?<path>.*), /${path}" # /v1/product/... 형태로 유입되면 /경로 형태로 변환 처리하여 경로 인식
+
         - id: order-service
           uri: lb://order-service
           predicates:
             - Path=/v1/order/**
           filters:
-            - "RewritePath=/v1/order/(?<path>.*), /${path}"
+            - "RewritePath=/v1/order/(?<path>.*), /${path}" # /v1/product/... 형태로 유입되면 /경로 형태로 변환 처리하여 경로 인식
 
 management:
   endpoints:
     web:
       exposure:
         include: health,info,metrics,prometheus,gateway
+
   endpoint:
     gateway:
       enabled: true
