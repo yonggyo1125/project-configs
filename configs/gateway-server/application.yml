@@ -13,7 +13,7 @@ spring:
     gateway:
       server:
         discovery.locator:
-              enabled: true # 서비스 디스커버리를 통해 동적으로 라우트를 생성하도록 설정
+          enabled: true # 서비스 디스커버리를 통해 동적으로 라우트를 생성하도록 설정
 
         routes:
           - id: product-service # 라우트 식별자
