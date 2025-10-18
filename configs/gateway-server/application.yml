@@ -24,3 +24,12 @@ management:
     web:
       exposure:
         include: health,info,metrics,prometheus,gateway
+  endpoint:
+    gateway:
+      enabled: true
+    prometheus:
+      enabled: true
+
+  metrics:
+    enabled:
+      resilience4j: true
