@@ -53,10 +53,6 @@ management:
       exposure:
         include: health,info,metrics,refresh,prometheus
 
-  endpoint:
-    prometheus:
-      enabled: true
-
   metrics:
     enabled:
       resilience4j: true
