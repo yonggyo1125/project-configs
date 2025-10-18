@@ -28,16 +28,11 @@ resilience4j:
         recordExceptions:  # 실패로 기록할 예외 목록
           - java.io.IOException
           - org.springframework.web.client.HttpServerErrorException
-    instances:
-      externalService:  # 'externalService'라는 이름의 회로 차단기 인스턴스
-        baseConfig: default  # 위에서 정의한 default 설정을 기본으로 사용
-        failureRateThreshold: 40  # 기본 설정을 오버라이드: 실패율 40%로 낮춤
-        waitDurationInOpenState: 30s  # 기본 설정을 오버라이드: 대기 시간 30초로 늘림
 
   # 재시도(Retry) 설정
   retry:
-    instances:
-      externalService:  # 'externalService'라는 이름의 재시도 인스턴스
+    configs:
+      default: # 기본 설정 그룹
         maxAttempts: 3  # 최대 3번 재시도
         waitDuration: 1s  # 재시도 간 대기 시간 1초
         enableExponentialBackoff: true  # 지수 백오프 활성화 (재시도마다 대기 시간 증가)
@@ -47,15 +42,15 @@ resilience4j:
 
   # 벌크헤드(Bulkhead) 설정 - 동시 호출 제한
   bulkhead:
-    instances:
-      externalService:  # 'externalService'라는 이름의 벌크헤드 인스턴스
+    configs:
+      default: # 기본 설정 그룹
         maxConcurrentCalls: 10  # 최대 동시 호출 수 10개
         maxWaitDuration: 0ms  # 세마포어 대기 시간 (0ms는 대기하지 않고 즉시 거부)
 
   # 속도 제한(Rate Limiter) 설정
   ratelimiter:
-    instances:
-      externalService:  # 'externalService'라는 이름의 속도 제한 인스턴스
+    configs:
+      default: # 기본 설정 그룹
         limitForPeriod: 50  # 주기당 최대 허용 요청 수 50개
         limitRefreshPeriod: 1s  # 제한 초기화 주기 1초
         timeoutDuration: 0ms  # 허가를 기다리는 최대 시간 (0ms는 대기 없음)
