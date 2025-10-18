@@ -3,30 +3,39 @@ spring:
     gateway:
       discovery:
         locator:
-          enabled: true
-          lowerCaseServiceId: true
+          enabled: true                    # 서비스 디스커버리 등록 서비스들을 기반으로 동적 라우트를 자동 생성합니다.
+          # (예: Eureka에 등록된 서비스가 있을 때 lb://{serviceId} 라우트가 자동 생성)
+          lower-case-service-id: true      # 서비스 ID를 소문자로 변환하여 라우트 생성합니다.
+          # (Spring의 relaxed binding으로 lower-case-service-id 또는 lowerCaseServiceId 모두 허용)
 
-      routes:
-        - id: product-service
-          uri: lb://product-service
+      routes:                             # 수동으로 정의하는 정적 라우트 목록입니다.
+        - id: product-service             # 라우트 식별자(유일해야 함). 로그·디버깅 목적이나 actuator에서 사용됩니다.
+          uri: lb://product-service       # 라우트 목적지. 'lb://' 접두사는 클라이언트 사이드 로드밸런싱(lB)을 사용함을 의미합니다.
+          # 실제 대상은 서비스 디스커버리(Eureka 등)에 등록된 product-service 인스턴스들입니다.
           predicates:
-            - Path=/v1/product/**
+            - Path=/v1/product/**        # 이 라우트가 적용될 요청 경로 조건. 와일드카드 사용 가능.
           filters:
             - 'RewritePath=/v1/product/(?<path>.*), /\${path}'
+              # 들어오는 요청 경로에서 /v1/product/ 부분을 제거하여 백엔드에 전달합니다.
+              # 예: /v1/product/123 -> /123
+              # 주의: ${path}가 스프링 프로퍼티 치환으로 평가되지 않도록 '\${path}' 형태로 이스케이프합니다.
+            # 작은따옴표로 감싸면 YAML 파싱 측면에서 안전합니다.
 
-        - id: order-service
+        - id: order-service               # 두 번째 라우트 예시
           uri: lb://order-service
           predicates:
             - Path=/v1/order/**
           filters:
             - 'RewritePath=/v1/order/(?<path>.*), /\${path}'
+            # /v1/order/** 요청을 /{path} 형태로 백엔드에 전달
 
 management:
   endpoints:
     web:
       exposure:
         include: health,info,metrics,prometheus,gateway
-
+          # Actuator에서 노출할 엔드포인트 목록입니다.
+        # gateway 항목을 포함해야 /actuator/gateway/** 관련 엔드포인트가 노출됩니다.
   endpoint:
     gateway:
-      enabled: true
+      enabled: true                    # gateway actuator 엔드포인트 활성화 여부 (기본값 true이나 명시적으로 설정 권장)
