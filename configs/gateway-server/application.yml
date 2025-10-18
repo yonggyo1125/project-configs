@@ -33,7 +33,7 @@ spring:
             - 'RewritePath=/v1/order/(?<path>.*), /\${path}' # /v1/order/** 요청을 /{path} 형태로 백엔드에 전달
             - name: RequestRateLimiter #Gateway가 제공하는 요청 속도 제한 필터입니다. 기본적으로 Redis 기반 RateLimiter를 사용하도록 구성한 예입니다.
               args:
-                redis-rate-limiter.replenishRate: 10 # 초마다 채워지는 토큰 수입니다. 예: 10이면 평균적으로 초당 10개의 요청을 허용합니다.
+                redis-rate-limiter.replenishRate: 1 # 초마다 채워지는 토큰 수입니다. 예: 10이면 평균적으로 초당 10개의 요청을 허용합니다.
                 redis-rate-limiter.burstCapacity: 20 # 토큰 버킷의 최대 용량입니다. 짧은 순간의 트래픽 급증을 흡수할 수 있습니다. replenishRate보다 크게 설정하면 버스트 허용범위가 커집니다.
                 redis-rate-limiter.requestedTokens: 1 # 한 요청이 소비하는 토큰 수입니다. (예: 리소스 무거운 요청은 2로 설정 가능)
                 key-resolver: "#{@userKeyResolver}" # 어떤 키(예: 사용자 ID, API키, IP 등)를 기준으로 rate limiting을 적용할지 결정하는 Bean을 참조합니다. 표현식은 Spring EL로 Gateway 구성에서 미리 정의한 Bean을 참조하게 됩니다.
