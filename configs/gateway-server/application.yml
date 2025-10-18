@@ -31,7 +31,7 @@ spring:
 
         # Gateway 라우트 설정: user-service로의 요청에 CircuitBreaker 필터 적용
         - id: user-service
-          uri: http://localhost:30011
+          uri: lb://user-service
           predicates:
             - Path=/v1/users/**
           filters:
