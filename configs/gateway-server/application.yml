@@ -27,8 +27,3 @@ management:
     web:
       exposure:
         include: health,info,metrics,refresh,prometheus
-  endpoint:
-    gateway:
-      enabled: true
-    prometheus:
-      enabled: true
