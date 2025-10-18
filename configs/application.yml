@@ -43,7 +43,7 @@ resilience4j:
   ratelimiter:  # 속도 제한 설정
     configs:
       default:  # 기본 속도 제한 설정
-        limitForPeriod: 50  # 주기당 최대 50개 요청 허용
+        limitForPeriod: 2  # 주기당 최대 50개 요청 허용
         limitRefreshPeriod: 1s  # 제한이 1초마다 초기화됨
         timeoutDuration: 0ms  # 허가 대기 시간 (0ms는 대기 없이 즉시 거부)
 
