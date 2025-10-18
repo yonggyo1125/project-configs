@@ -38,7 +38,7 @@ spring:
             - name: CircuitBreaker  # Gateway 필터 이름: Resilience4j 기반 CircuitBreaker 필터를 호출합니다.
               args:
                 name: userServiceCircuitBreaker # 필터에서 사용할 회로차단기 인스턴스 이름(Resilience4j 설정의 인스턴스 키)
-                fallbackUri: redirect:/fallback/users # 회로가 열리거나 오류 발생 시 대체 처리할 엔드포인트
+                fallbackUri: forward:/fallback/users # 회로가 열리거나 오류 발생 시 대체 처리할 엔드포인트
                   # 'forward:' 접두사는 내부 포워드(서버 내부 호출)를 의미합니다.
                   # 예: forward:/fallback/users -> 내부 컨트롤러의 /fallback/users 핸들러로 전달
                 # 주의: external URL로 리디렉션하려면 'http://...' 형태 사용 가능하나 보안/루프 주의
