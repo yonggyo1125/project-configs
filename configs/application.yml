@@ -12,15 +12,14 @@ spring:
         configs:
           default: # 기본 회로 차단기 설정
             slidingWindowType: COUNT_BASED  # 호출 횟수 기반으로 슬라이딩 윈도우 설정 (TIME_BASED도 가능)
-            slidingWindowSize: 10  # 상태 결정을 위해 고려할 최근 호출 수
-            minimumNumberOfCalls: 3  # 회로 차단기가 결정을 내리기 위한 최소 호출 수
-            permittedNumberOfCallsInHalfOpenState: 3  # 반개방 상태에서 허용되는 호출 수
+            slidingWindowSize: 100  # 상태 결정을 위해 고려할 최근 호출 수
+            minimumNumberOfCalls: 10  # 회로 차단기가 결정을 내리기 위한 최소 호출 수
+            permittedNumberOfCallsInHalfOpenState: 10  # 반개방 상태에서 허용되는 호출 수
             failureRateThreshold: 50  # 실패율이 50%를 초과하면 회로 차단 (% 기준)
             waitDurationInOpenState: 30s  # 회로가 열린 상태로 유지되는 시간 (30초)
             recordExceptions: # 실패로 간주할 예외 목록\
-              - java.io.Exception
-              #- java.io.IOException
-              #- org.springframework.web.client.HttpServerErrorException
+              - java.io.IOException
+              - org.springframework.web.client.HttpServerErrorException
 
 # Resilience4j 개별 모듈 설정 (Retry, Bulkhead, RateLimiter)
 resilience4j:
