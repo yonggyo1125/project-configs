@@ -4,6 +4,48 @@ spring:
       ribbon:
         enabled: false # Netflix Ribbon 대신 Spring Cloud LoadBalancer 사용
 
+    circuitbreaker:
+      resilience4j:
+        enabled: true  # Resilience4j 회로 차단기 활성화
+
+        # 공통 템플릿(모든 인스턴스의 기본 값)
+        configs:
+          default: # 기본 회로 차단기 설정
+            slidingWindowType: COUNT_BASED  # 호출 횟수 기반으로 슬라이딩 윈도우 설정 (TIME_BASED도 가능)
+            slidingWindowSize: 100  # 상태 결정을 위해 고려할 최근 호출 수
+            minimumNumberOfCalls: 10  # 회로 차단기가 결정을 내리기 위한 최소 호출 수
+            permittedNumberOfCallsInHalfOpenState: 10  # 반개방 상태에서 허용되는 호출 수
+            failureRateThreshold: 50  # 실패율이 50%를 초과하면 회로 차단 (% 기준)
+            waitDurationInOpenState: 30s  # 회로가 열린 상태로 유지되는 시간 (30초)
+            recordExceptions: # 실패로 간주할 예외 목록
+              - java.io.IOException
+              - org.springframework.web.client.HttpServerErrorException
+
+# Resilience4j 개별 모듈 설정 (Retry, Bulkhead, RateLimiter)
+resilience4j:
+  retry:  # 재시도 설정
+    configs:
+      default:  # 기본 재시도 설정
+        maxAttempts: 3  # 최대 3회 재시도
+        waitDuration: 1s  # 재시도 간 1초 대기
+        enableExponentialBackoff: true  # 지수 백오프 활성화 (재시도마다 대기 시간 증가)
+        exponentialBackoffMultiplier: 2.0  # 각 재시도마다 대기 시간이 2배로 증가
+        retryExceptions:  # 재시도할 예외 목록
+          - java.io.IOException
+
+  bulkhead:  # 벌크헤드 설정 (동시 호출 제한)
+    configs:
+      default:  # 기본 벌크헤드 설정
+        maxConcurrentCalls: 10  # 최대 10개의 동시 호출 허용
+        maxWaitDuration: 0ms  # 세마포어 대기 시간 (0ms는 대기 없이 즉시 거부)
+
+  ratelimiter:  # 속도 제한 설정
+    configs:
+      default:  # 기본 속도 제한 설정
+        limitForPeriod: 50  # 주기당 최대 50개 요청 허용
+        limitRefreshPeriod: 1s  # 제한이 1초마다 초기화됨
+        timeoutDuration: 0ms  # 허가 대기 시간 (0ms는 대기 없이 즉시 거부)
+
 management:
   endpoints:
     web:
@@ -13,44 +55,3 @@ management:
     prometheus:
       enabled: true
 
-
-resilience4j:
-  # 회로 차단기(Circuit Breaker) 설정
-  circuitbreaker:
-    configs:
-      default:  # 기본 설정 그룹
-        slidingWindowType: COUNT_BASED  # 슬라이딩 윈도우 타입: 호출 횟수 기반
-        slidingWindowSize: 100  # 마지막 100개의 호출을 기준으로 실패율 계산
-        minimumNumberOfCalls: 10  # 회로 차단 결정을 내리기 위한 최소 호출 수
-        permittedNumberOfCallsInHalfOpenState: 10  # 반개방 상태에서 허용되는 호출 수
-        failureRateThreshold: 50  # 실패율 임계값 50% (이 이상이면 회로 차단)
-        waitDurationInOpenState: 10s  # 개방 상태에서 대기 시간 10초
-        recordExceptions:  # 실패로 기록할 예외 목록
-          - java.io.IOException
-          - org.springframework.web.client.HttpServerErrorException
-
-  # 재시도(Retry) 설정
-  retry:
-    configs:
-      default: # 기본 설정 그룹
-        maxAttempts: 3  # 최대 3번 재시도
-        waitDuration: 1s  # 재시도 간 대기 시간 1초
-        enableExponentialBackoff: true  # 지수 백오프 활성화 (재시도마다 대기 시간 증가)
-        exponentialBackoffMultiplier: 2.0  # 재시도마다 대기 시간을 2배로 증가
-        retryExceptions:  # 재시도할 예외 목록
-          - java.io.IOException
-
-  # 벌크헤드(Bulkhead) 설정 - 동시 호출 제한
-  bulkhead:
-    configs:
-      default: # 기본 설정 그룹
-        maxConcurrentCalls: 10  # 최대 동시 호출 수 10개
-        maxWaitDuration: 0ms  # 세마포어 대기 시간 (0ms는 대기하지 않고 즉시 거부)
-
-  # 속도 제한(Rate Limiter) 설정
-  ratelimiter:
-    configs:
-      default: # 기본 설정 그룹
-        limitForPeriod: 50  # 주기당 최대 허용 요청 수 50개
-        limitRefreshPeriod: 1s  # 제한 초기화 주기 1초
-        timeoutDuration: 0ms  # 허가를 기다리는 최대 시간 (0ms는 대기 없음)
