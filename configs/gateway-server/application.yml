@@ -29,6 +29,42 @@ spring:
             - 'RewritePath=/v1/order/(?<path>.*), /\${path}'
             # /v1/order/** 요청을 /{path} 형태로 백엔드에 전달
 
+        # Gateway 라우트 설정: user-service로의 요청에 CircuitBreaker 필터 적용
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/v1/users/**
+          filters:
+            - name: CircuitBreaker  # Gateway 필터 이름: Resilience4j 기반 CircuitBreaker 필터를 호출합니다.
+              args:
+                name: userServiceCircuitBreaker # 필터에서 사용할 회로차단기 인스턴스 이름(Resilience4j 설정의 인스턴스 키)
+                fallbackUri: forward:/fallback/users # 회로가 열리거나 오류 발생 시 대체 처리할 엔드포인트
+                  # 'forward:' 접두사는 내부 포워드(서버 내부 호출)를 의미합니다.
+                  # 예: forward:/fallback/users -> 내부 컨트롤러의 /fallback/users 핸들러로 전달
+                # 주의: external URL로 리디렉션하려면 'http://...' 형태 사용 가능하나 보안/루프 주의
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        slidingWindowSize: 10                           # 슬라이딩 윈도우에 포함할 최근 호출 수 (통계 집계 기준)
+        # 윈도우 크기가 크면 안정적인 통계, 작으면 민감도가 증가
+        minimumNumberOfCalls: 5                         # 통계 집계를 시작하기 위한 최소 호출 수
+        # 이 값보다 호출이 적으면 실패율 기반 판단을 하지 않음
+        permittedNumberOfCallsInHalfOpenState: 3       # half-open 상태에서 허용할 시도 호출 수
+        # 이 수치만큼 성공하면 closed로 전환 가능
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        # true면 open 상태에서 waitDuration 만료 후 자동으로 half-open 전환 시도
+        waitDurationInOpenState: 5s                     # open 상태에서 다음 검사(half-open)로 전환까지 대기 시간
+        # 단위: s (위 예시는 5초). 운영 환경에선 더 길게 설정 권장(예: 몇십 초)
+        failureRateThreshold: 50                        # 실패 허용 비율(%) — 이 비율 이상이면 회로를 open으로 전환
+        # 예: 50 -> 실패율이 50% 이상이면 오픈
+        eventConsumerBufferSize: 10                     # CircuitBreaker 이벤트 버퍼 크기(모니터링/리스너용)
+    instances:
+      userServiceCircuitBreaker:
+        baseConfig: default                            # 위에 정의한 default 설정을 이 인스턴스에 적용
+
+
 management:
   endpoints:
     web:
