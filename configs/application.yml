@@ -8,7 +8,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info,refresh,prometheus
+        include: health,info,metrics,refresh,prometheus
   endpoint:
     prometheus:
       enabled: true
@@ -17,76 +17,45 @@ management:
 resilience4j:
   # 회로 차단기(Circuit Breaker) 설정
   circuitbreaker:
+    configs:
+      default:  # 기본 설정 그룹
+        slidingWindowType: COUNT_BASED  # 슬라이딩 윈도우 타입: 호출 횟수 기반
+        slidingWindowSize: 100  # 마지막 100개의 호출을 기준으로 실패율 계산
+        minimumNumberOfCalls: 10  # 회로 차단 결정을 내리기 위한 최소 호출 수
+        permittedNumberOfCallsInHalfOpenState: 10  # 반개방 상태에서 허용되는 호출 수
+        failureRateThreshold: 50  # 실패율 임계값 50% (이 이상이면 회로 차단)
+        waitDurationInOpenState: 10s  # 개방 상태에서 대기 시간 10초
+        recordExceptions:  # 실패로 기록할 예외 목록
+          - java.io.IOException
+          - org.springframework.web.client.HttpServerErrorException
     instances:
-      myServiceCb:
-        # 슬라이딩 윈도우 유형: COUNT_BASED(호출 횟수 기반) 또는 TIME_BASED(시간 기반)
-        slidingWindowType: COUNT_BASED
-        # 슬라이딩 윈도우 크기: 상태를 평가할 때 고려할 호출 수
-        slidingWindowSize: 20
-        # 실패율을 계산하기 위한 최소 호출 수
-        minimumNumberOfCalls: 10
-        # 회로를 열기 위한 실패율 임계값(%)
-        failureRateThreshold: 50
-        # OPEN 상태에서 HALF_OPEN 상태로 전환되기까지 대기 시간
-        waitDurationInOpenState: 30s
-        # HALF_OPEN 상태에서 허용되는 호출 수
-        permittedNumberOfCallsInHalfOpenState: 3
-        # 느린 호출로 간주하는 비율 임계값(%)
-        slowCallRateThreshold: 50
-        # 느린 호출로 분류되는 시간 임계값
-        slowCallDurationThreshold: 2s
+      externalService:  # 'externalService'라는 이름의 회로 차단기 인스턴스
+        baseConfig: default  # 위에서 정의한 default 설정을 기본으로 사용
+        failureRateThreshold: 40  # 기본 설정을 오버라이드: 실패율 40%로 낮춤
+        waitDurationInOpenState: 30s  # 기본 설정을 오버라이드: 대기 시간 30초로 늘림
 
   # 재시도(Retry) 설정
   retry:
     instances:
-      myServiceRetry:
-        # 최대 재시도 횟수(최초 시도 포함)
-        maxAttempts: 4
-        # 재시도 간 대기 시간
-        waitDuration: 500ms
-        # 재시도할 예외 목록
-        retryExceptions:
+      externalService:  # 'externalService'라는 이름의 재시도 인스턴스
+        maxAttempts: 3  # 최대 3번 재시도
+        waitDuration: 1s  # 재시도 간 대기 시간 1초
+        enableExponentialBackoff: true  # 지수 백오프 활성화 (재시도마다 대기 시간 증가)
+        exponentialBackoffMultiplier: 2.0  # 재시도마다 대기 시간을 2배로 증가
+        retryExceptions:  # 재시도할 예외 목록
           - java.io.IOException
-          - org.springframework.web.client.HttpServerErrorException
-        # 재시도하지 않을 예외 목록
-        #ignoreExceptions:
-        #  - com.myapp.NonRetryableException
-        # 지수 백오프 설정(재시도 간격을 점진적으로 증가)
-        exponentialBackoff:
-          # 지수 백오프 활성화 여부
-          enabled: true
-          # 대기 시간 증가 승수
-          multiplier: 2.0
-          # 최대 대기 시간
-          maxWaitDuration: 5s
 
-  # 벌크헤드(Bulkhead) 설정
+  # 벌크헤드(Bulkhead) 설정 - 동시 호출 제한
   bulkhead:
     instances:
-      # 세마포어 방식 벌크헤드(기본값)
-      myServiceBulkhead:
-        # 동시에 처리할 수 있는 최대 호출 수
-        maxConcurrentCalls: 10
-        # 대기열에서 대기하는 최대 시간(0ms는 대기하지 않음을 의미)
-        maxWaitDuration: 0ms
-      # 스레드풀 방식 벌크헤드
-      myThreadPoolBulkhead:
-        # 벌크헤드 유형: THREADPOOL
-        type: THREADPOOL
-        # 코어 스레드 풀 크기
-        coreThreadPoolSize: 5
-        # 최대 스레드 풀 크기
-        maxThreadPoolSize: 10
-        # 작업 대기열 용량
-        queueCapacity: 50
+      externalService:  # 'externalService'라는 이름의 벌크헤드 인스턴스
+        maxConcurrentCalls: 10  # 최대 동시 호출 수 10개
+        maxWaitDuration: 0ms  # 세마포어 대기 시간 (0ms는 대기하지 않고 즉시 거부)
 
-  # 속도 제한기(Rate Limiter) 설정
+  # 속도 제한(Rate Limiter) 설정
   ratelimiter:
     instances:
-      myServiceRateLimiter:
-        # 주기 당 허용되는 요청 수
-        limitForPeriod: 10
-        # 제한이 갱신되는 주기
-        limitRefreshPeriod: 1s
-        # 권한 획득 시도 시 대기하는 최대 시간(0은 대기하지 않음)
-        timeoutDuration: 0
+      externalService:  # 'externalService'라는 이름의 속도 제한 인스턴스
+        limitForPeriod: 50  # 주기당 최대 허용 요청 수 50개
+        limitRefreshPeriod: 1s  # 제한 초기화 주기 1초
+        timeoutDuration: 0ms  # 허가를 기다리는 최대 시간 (0ms는 대기 없음)
