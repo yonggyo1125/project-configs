@@ -49,8 +49,8 @@ resilience4j:
           - java.io.IOException
           - org.springframework.web.client.HttpServerErrorException
         # 재시도하지 않을 예외 목록
-        ignoreExceptions:
-          - com.myapp.NonRetryableException
+        #ignoreExceptions:
+        #  - com.myapp.NonRetryableException
         # 지수 백오프 설정(재시도 간격을 점진적으로 증가)
         exponentialBackoff:
           # 지수 백오프 활성화 여부
