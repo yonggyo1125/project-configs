@@ -37,7 +37,7 @@ resilience4j:
   bulkhead:  # 벌크헤드 설정 (동시 호출 제한)
     configs:
       default:  # 기본 벌크헤드 설정
-        maxConcurrentCalls: 10  # 최대 10개의 동시 호출 허용
+        maxConcurrentCalls: 1  # 최대 10개의 동시 호출 허용
         maxWaitDuration: 0ms  # 세마포어 대기 시간 (0ms는 대기 없이 즉시 거부)
 
   ratelimiter:  # 속도 제한 설정
