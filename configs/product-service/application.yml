@@ -1,4 +1,5 @@
 rabbit:
-  exchange: demo.exchange
-  queue: demo.queue
-  routing-key: demo.routing
+  product:
+    exchange: product.exchange
+    queue: product.queue
+    routing-key: product.routing
