@@ -1,4 +1,17 @@
 spring:
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: user
+    password: password
+    virtual-host: /
+    connection-timeout: 30000
+    requested-heartbeat: 30
+    listener:
+      simple:
+        concurrency: 2
+        max-concurrency: 10
+        acknowledge-mode: manual  # 또는 auto
   cloud:
     loadbalancer:
       ribbon:
