@@ -1,0 +1,4 @@
+rabbit:
+  exchange: demo.exchange
+  queue: demo.queue
+  routing-key: demo.routing
