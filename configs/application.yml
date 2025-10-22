@@ -8,8 +8,8 @@ spring:
       client:
         registration:
           keycloak:
-            client-id: ${CLIENT_ID}
-            client-secret: ${CLIENT_SECRET}
+            client-id: ${KEYCLOAK_CLIENT_ID}
+            client-secret: ${KEYCLOAK_CLIENT_SECRET}
             authorization-grant-type: authorization_code
             redirect-uri: "http://localhost:3000/v1/user/authorization/code"
             scope:
@@ -101,3 +101,10 @@ management:
     sampling:
       probability: 1.0
 
+keycloak:
+  server-url: https://keycloak.code-factory.co.kr
+  realm: codefactory
+  client-id: ${KEYCLOAK_CLIENT_ID}
+  client-secret: ${KEYCLOAK_CLIENT_SECRET}
+  admin-username: ${KEYCLOAK_ADMIN_USERNAME}
+  admin-password: ${KEYCLOAK_AMIN_PASSWORD}
