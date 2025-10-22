@@ -50,7 +50,7 @@ spring:
         - id: user-service
           uri: lb://user-service
           predicates:
-            - Path=/v1/users/**
+            - Path=/v1/user/**
           filters:
             - 'RewritePath=/v1/users/(?<path>.*), /\${path}'
             - name: CircuitBreaker  # Gateway 필터 이름: Resilience4j 기반 CircuitBreaker 필터를 호출합니다.
