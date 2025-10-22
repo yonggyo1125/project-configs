@@ -16,6 +16,7 @@ spring:
               - openid
               - profile
               - email
+              - api.read
         provider:
           keycloak:
             issuer-uri: https://keycloak.code-factory.co.kr/realms/codefactory
