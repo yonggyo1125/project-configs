@@ -1,10 +1,33 @@
 spring:
+  # 시큐리티 - oauth2설정
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://keycloak.code-factory.co.kr/realms/codefactory
+      client:
+        registration:
+          keycloak:
+            client-id: ${CLIENT_ID}
+            client-secret: ${CLIENT_SECRET}
+            authorization-grant-type: authorization_code
+            redirect-uri: "http://localhost:3000/v1/user/authorization/code"
+            scope:
+              - openid
+              - profile
+              - email
+        provider:
+          keycloak:
+            issuer-uri: https://keycloak.code-factory.co.kr/realms/codefactory
+
+  # RabbitMQ
   rabbitmq:
     host: localhost
     port: 5672
     username: admin
     password: _aA123456
 
+  # Spring Cloud 설정
   cloud:
     loadbalancer:
       ribbon:
