@@ -1,4 +1,8 @@
 spring:
+  cors:
+    allowed-origins: '*'
+    allowed-methods: "*"
+    allowed-headers: "*"
   # 시큐리티 - oauth2설정
   security:
     oauth2:
